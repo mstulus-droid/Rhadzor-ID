@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apps — RHADZOR.ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --neon-pink: #ff006e;
+            --neon-cyan: #00f5ff;
+            --neon-yellow: #ffbe0b;
+            --neon-green: #06ffa5;
+            --dark-bg: #0a0a0f;
+        }
+
+        body { 
+            background-color: #030303; 
+            color: white; 
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Noise & Grid */
+        .noise {
+            position: fixed; 
+            inset: 0; 
+            pointer-events: none; 
+            z-index: 50;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+        }
+
+        /* Navigation Style from Games */
+        .nav-gaming {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(3,3,3,0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-gaming a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+        }
+
+        .nav-gaming a:hover {
+            text-shadow: 0 0 20px var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #10b981, #3b82f6);
+            z-index: 99999;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+
+        /* Custom Cursor */
+        .cursor-dot {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 8px; 
+            height: 8px;
+            background: white; 
+            border-radius: 50%; 
+            pointer-events: none; 
+            z-index: 10000;
+            transform: translate(-50%, -50%); 
+            mix-blend-mode: difference;
+            transition: transform 0.15s ease;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .cursor-ring.hovering {
+            width: 60px;
+            height: 60px;
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Stacking Cards Container */
+        .cards-wrapper { 
+            position: relative; 
+            z-index: 10; 
+            width: 100%;
+            padding-bottom: 10vh; 
+        }
+
+        .card-sticky-container {
+            position: sticky; 
+            top: 12vh;
+            width: 100%;
+            height: 80vh;
+            display: flex; 
+            justify-content: center; 
+            margin-bottom: 20vh;
+            perspective: 1500px;
+            z-index: calc(10 + var(--card-index, 0));
+        }
+
+        .card-sticky-container:nth-child(1) { --card-index: 1; z-index: 11; }
+        .card-sticky-container:nth-child(2) { --card-index: 2; z-index: 12; }
+        .card-sticky-container:nth-child(3) { --card-index: 3; z-index: 13; }
+        .card-sticky-container:nth-child(4) { --card-index: 4; z-index: 14; }
+
+        /* Holographic Card */
+        .holo-card-wrapper {
+            width: 92%; 
+            max-width: 1100px; 
+            height: 100%; 
+            position: relative;
+            perspective: 1000px; 
+            z-index: 10;
+            margin: 0 auto;
+        }
+
+        .holo-card-tilt-layer {
+            width: 100%; 
+            height: 100%;
+            border-radius: 32px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+            background: rgba(255,255,255,0.05);
+            padding: 1px;
+        }
+
+        /* Animated Border - HOVER ONLY */
+        .holo-card-tilt-layer::before {
+            content: ""; 
+            position: absolute; 
+            inset: 0; 
+            border-radius: 32px; 
+            padding: 1px; 
+            background: radial-gradient(
+                600px circle at var(--mouse-x) var(--mouse-y),
+                rgba(255, 255, 255, 0.8),
+                rgba(255, 255, 255, 0.4) 20%,
+                transparent 40%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude;
+            opacity: 0; 
+            transition: opacity 0.3s ease; 
+            pointer-events: none; 
+            z-index: 2;
+        }
+
+        .holo-card-inner {
+            width: 100%; 
+            height: 100%;
+            background: rgba(20, 20, 23, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 31px; 
+            overflow: hidden; 
+            position: relative; 
+            z-index: 10;
+            pointer-events: none;
+            box-shadow: 
+                0 20px 50px -10px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(255,255,255,0.02) inset;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .holo-card-inner {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .holo-card-inner a, .holo-card-inner button, .holo-card-inner input, .holo-card-inner textarea {
+            pointer-events: auto;
+        }
+
+        /* Surface Glow */
+        .holo-card-inner::after {
+            content: ""; 
+            position: absolute; 
+            inset: 0; 
+            pointer-events: none;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0; 
+            transition: opacity 0.5s; 
+            z-index: 20;
+        }
+
+        .holo-card-wrapper:hover .holo-card-tilt-layer::before,
+        .holo-card-wrapper:hover .holo-card-inner::after {
+            opacity: 1;
+        }
+
+        /* Glitch Text */
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+        }
+
+        .glitch-text::before { color: #ff0000; z-index: -1; }
+        .glitch-text::after { color: #00ffff; z-index: -2; }
+
+        .glitch-text:hover::before {
+            animation: glitch-1 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            opacity: 0.8;
+        }
+
+        .glitch-text:hover::after {
+            animation: glitch-2 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes glitch-1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { transform: translate(0); }
+            20% { transform: translate(3px, -3px); }
+            40% { transform: translate(3px, 3px); }
+            60% { transform: translate(-3px, -3px); }
+            80% { transform: translate(-3px, 3px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Status Pulse */
+        .status-pulse {
+            position: relative;
+        }
+
+        .status-pulse::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.4;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Floating Orbs */
+        .float-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%);
+            top: 20%;
+            left: 10%;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
+            bottom: 20%;
+            right: 10%;
+            animation-delay: -4s;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .cursor-dot, .cursor-ring { display: none !important; }
+            body { cursor: auto !important; }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+    <div class="noise"></div>
+    <div class="scroll-progress" id="scroll-progress"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+    
+    <div class="float-orb orb-1"></div>
+    <div class="float-orb orb-2"></div>
+
+    <nav class="nav-gaming">
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-2 h-6 bg-white group-hover:bg-[var(--neon-cyan)] transition-colors animate-pulse"></div>
+            <span class="font-bold tracking-tighter">RHADZOR.ID</span>
+        </a>
+        <div class="flex items-center gap-6">
+            <span class="text-[var(--neon-pink)] font-bold">APPS</span>
+            <a href="games.html" class="hover:text-[var(--neon-cyan)]">GAMES</a>
+            <a href="index.html#contact" class="hover:text-[var(--neon-cyan)]">CONTACT</a>
+        </div>
+    </nav>
+
+    <section class="min-h-[60vh] flex flex-col justify-center items-center text-center px-4 relative z-10 w-full mt-10">
+        <div class="absolute inset-0 bg-grid z-0"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-blue-900/20 via-emerald-900/10 to-rose-900/20 rounded-full blur-[120px] -z-10"></div>
+
+        <div class="overflow-hidden mb-6 z-10">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse"></span>
+                <span class="text-[10px] font-mono tracking-[0.2em] text-white/70">TOOLKIT</span>
+            </div>
+        </div>
+
+        <h1 class="font-sans text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter mb-8 relative z-10">
+            <span class="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 glitch-text" data-text="TOOLS THAT">TOOLS THAT</span>
+            <span class="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 mt-2">JUST WORK</span>
+        </h1>
+
+        <p class="font-mono text-slate-400 max-w-lg text-sm leading-relaxed mx-auto z-10">
+            No bloat, no BS—just tools that help you stay organized and in control.
+        </p>
+    </section>
+
+    <section class="cards-wrapper">
+    
+        <div class="card-sticky-container">
+            <div class="holo-card-wrapper group">
+                <div class="holo-card-tilt-layer">
+                    <div class="holo-card-inner">
+                        <div class="absolute inset-0 bg-grid-white/[0.02] z-0"></div>
+                        
+                        <div class="p-8 md:p-12 flex flex-col justify-between h-[55%] md:h-auto relative z-10">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 status-pulse">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <span class="font-mono text-xs text-rose-400 tracking-wider">MODULE_01</span>
+                                </div>
+                                <h2 class="font-sans text-4xl md:text-5xl font-bold mb-3 text-white group-hover:text-rose-400 transition-colors duration-300">KALEINDO.</h2>
+                                <p class="text-slate-400 leading-relaxed text-sm md:text-base">
+                                    The ultimate Indonesian calendar. Complete with Hijri & Javanese (Weton) dates, National Holidays, customizable themes, and integrated notes. <br>Simple & beautiful.
+                                </p>
+                            </div>
+                            
+                            <div class="mt-6 flex gap-3">
+                                <a href="https://kaleindo.rhadzor.id" target="_blank" class="magnetic-btn inline-flex items-center gap-3 px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-rose-500 hover:text-white transition-all duration-300 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(244,63,94,0.5)] w-fit text-sm group/btn">
+                                    <span>LAUNCH APP</span> 
+                                    <i class="fas fa-external-link-alt group-hover/btn:translate-x-1 transition-transform"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-[45%] md:h-full overflow-hidden bg-gradient-to-br from-slate-900 to-black border-t md:border-t-0 md:border-l border-white/10 group-hover:border-rose-500/20 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-rose-900/20 mix-blend-overlay z-10 group-hover:bg-rose-900/30 transition-colors duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=800&auto=format&fit=crop&q=80" alt="Kaleindo App" class="w-full h-full object-cover object-top opacity-80 md:opacity-70 grayscale-[30%] group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out">
+                            
+                            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-end z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-4 group-hover:translate-y-0">
+                                <div class="bg-black/60 backdrop-blur px-3 py-2 rounded-lg border border-white/10">
+                                    <div class="text-[10px] font-mono text-rose-400 mb-1">ACTIVE USERS</div>
+                                    <div class="text-lg font-bold font-mono">12,847</div>
+                                </div>
+                                <div class="bg-black/60 backdrop-blur px-3 py-2 rounded-lg border border-white/10">
+                                    <div class="text-[10px] font-mono text-emerald-400 mb-1">RATING</div>
+                                    <div class="text-lg font-bold font-mono">4.9★</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+
+        <div class="card-sticky-container">
+            <div class="holo-card-wrapper group">
+                <div class="holo-card-tilt-layer">
+                    <div class="holo-shadow"></div>
+                    <div class="holo-card-inner">
+                        <div class="absolute inset-0 bg-grid-white/[0.02] z-0"></div>
+                        
+                        <div class="p-8 md:p-12 flex flex-col justify-between h-[55%] md:h-auto relative z-10">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold font-mono status-pulse">0</div>
+                                    <span class="font-mono text-xs text-emerald-400 tracking-wider">MODULE_02</span>
+                                </div>
+                                <h2 class="font-sans text-4xl md:text-5xl font-bold mb-3 text-white group-hover:text-emerald-400 transition-colors duration-300">Nolkan.</h2>
+                                <p class="text-slate-400 leading-relaxed text-sm md:text-base">
+                                    Your money, your rules. Assign every dollar. Track every expense. See exactly where your money goes. Zero confusion, full control.
+                                </p>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <button class="magnetic-btn inline-flex items-center gap-3 px-6 py-3 border border-white/20 text-white/50 font-bold rounded-full cursor-not-allowed w-fit text-sm relative overflow-hidden group/btn">
+                                    <span class="relative z-10 flex items-center gap-2">
+                                        <i class="fas fa-lock text-xs"></i>
+                                        COMING SOON
+                                    </span>
+                                    <div class="absolute inset-0 bg-emerald-500/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-[45%] md:h-full overflow-hidden bg-gradient-to-br from-slate-900 to-black border-t md:border-t-0 md:border-l border-white/10 group-hover:border-emerald-500/20 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-emerald-600/10 mix-blend-overlay group-hover:bg-emerald-600/20 transition-colors duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2232&auto=format&fit=crop" alt="Nolkan Preview" class="w-full h-full object-cover object-center opacity-60 md:opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700">
+                            
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 bg-black/80 backdrop-blur-xl border border-emerald-500/30 rounded-2xl shadow-2xl group-hover:scale-110 transition-transform duration-500">
+                                <div class="w-20 h-20 rounded-full border-4 border-emerald-500/30 border-t-emerald-500 flex items-center justify-center animate-spin-slow">
+                                    <span class="font-mono text-lg text-white font-bold">0.00</span>
+                                </div>
+                                <div class="mt-3 text-center">
+                                    <div class="text-[10px] font-mono text-emerald-400">BETA SIGNUP</div>
+                                </div>
+                            </div>
+
+                            <div class="absolute top-4 right-4 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                            <div class="absolute bottom-4 left-4 w-32 h-1 bg-gradient-to-r from-emerald-500 to-transparent rounded-full opacity-50"></div>
+                        </div>
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+
+        <div class="card-sticky-container">
+            <div class="holo-card-wrapper group">
+                <div class="holo-card-tilt-layer">
+                    <div class="holo-card-inner">
+                        <div class="absolute inset-0 bg-grid-white/[0.02] z-0"></div>
+                        
+                        <div class="p-8 md:p-12 flex flex-col justify-between h-[55%] md:h-auto relative z-10">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 status-pulse">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    <span class="font-mono text-xs text-blue-400 tracking-wider">MODULE_03</span>
+                                </div>
+                                <h2 class="font-sans text-4xl md:text-5xl font-bold mb-3 text-white group-hover:text-blue-400 transition-colors duration-300">TaskFlow.</h2>
+                                <p class="text-slate-400 leading-relaxed text-sm md:text-base">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Smart task management with AI prioritization.
+                                </p>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <button class="magnetic-btn inline-flex items-center gap-3 px-6 py-3 border border-white/20 text-white/50 font-bold rounded-full cursor-not-allowed w-fit text-sm relative overflow-hidden group/btn">
+                                    <span class="relative z-10 flex items-center gap-2">
+                                        <i class="fas fa-clock text-xs"></i>
+                                        IN DEVELOPMENT
+                                    </span>
+                                    <div class="absolute inset-0 bg-blue-500/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-[45%] md:h-full overflow-hidden bg-gradient-to-br from-slate-900 to-black border-t md:border-t-0 md:border-l border-white/10 group-hover:border-blue-500/20 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-blue-600/10 mix-blend-overlay group-hover:bg-blue-600/20 transition-colors duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&auto=format&fit=crop&q=80" alt="TaskFlow Preview" class="w-full h-full object-cover object-center opacity-40 md:opacity-30 grayscale group-hover:grayscale-0 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700">
+                            
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                                <div class="w-24 h-24 rounded-full border-2 border-blue-500/30 flex items-center justify-center mb-4 mx-auto relative">
+                                    <div class="absolute inset-0 rounded-full border-t-2 border-blue-500 animate-spin"></div>
+                                    <i class="fas fa-code text-2xl text-blue-400"></i>
+                                </div>
+                                <div class="text-[10px] font-mono text-blue-400 tracking-widest">BUILDING...</div>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+
+        <div class="card-sticky-container">
+            <div class="holo-card-wrapper group">
+                <div class="holo-card-tilt-layer">
+                    <div class="holo-card-inner">
+                        <div class="absolute inset-0 bg-grid-white/[0.02] z-0"></div>
+                        
+                        <div class="p-8 md:p-12 flex flex-col justify-between h-[55%] md:h-auto relative z-10">
+                            <div>
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 status-pulse">
+                                        <i class="fas fa-brain"></i>
+                                    </div>
+                                    <span class="font-mono text-xs text-purple-400 tracking-wider">MODULE_04</span>
+                                </div>
+                                <h2 class="font-sans text-4xl md:text-5xl font-bold mb-3 text-white group-hover:text-purple-400 transition-colors duration-300">MindSpace.</h2>
+                                <p class="text-slate-400 leading-relaxed text-sm md:text-base">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation. Digital journaling with mood tracking and insights.
+                                </p>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <button class="magnetic-btn inline-flex items-center gap-3 px-6 py-3 border border-white/20 text-white/50 font-bold rounded-full cursor-not-allowed w-fit text-sm relative overflow-hidden group/btn">
+                                    <span class="relative z-10 flex items-center gap-2">
+                                        <i class="fas fa-flask text-xs"></i>
+                                        EXPERIMENTAL
+                                    </span>
+                                    <div class="absolute inset-0 bg-purple-500/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-[45%] md:h-full overflow-hidden bg-gradient-to-br from-slate-900 to-black border-t md:border-t-0 md:border-l border-white/10 group-hover:border-purple-500/20 transition-colors duration-500">
+                            <div class="absolute inset-0 bg-purple-600/10 mix-blend-overlay group-hover:bg-purple-600/20 transition-colors duration-500"></div>
+                            <img src="https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?w=800&auto=format&fit=crop&q=80" alt="MindSpace Preview" class="w-full h-full object-cover object-center opacity-40 md:opacity-30 grayscale group-hover:grayscale-0 group-hover:opacity-60 group-hover:scale-105 transition-all duration-700">
+                            
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+                                <div class="grid grid-cols-3 gap-2 mb-4">
+                                    <div class="w-3 h-3 rounded-full bg-purple-500/30 animate-pulse"></div>
+                                    <div class="w-3 h-3 rounded-full bg-purple-500/50 animate-pulse" style="animation-delay: 0.2s"></div>
+                                    <div class="w-3 h-3 rounded-full bg-purple-500/30 animate-pulse" style="animation-delay: 0.4s"></div>
+                                </div>
+                                <div class="text-[10px] font-mono text-purple-400 tracking-widest">PROTOTYPING</div>
+                            </div>
+                        </div>
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+
+    </section>
+
+    <footer class="py-12 text-center relative z-20 border-t border-white/5 bg-black/50 backdrop-blur">
+        <a href="index.html" class="inline-flex items-center gap-2 text-xs font-mono text-slate-500 hover:text-emerald-400 transition-colors mb-4">
+            <i class="fas fa-arrow-left"></i>
+            BACK TO HOME
+        </a>
+        <p class="text-xs font-mono text-slate-600 tracking-wider">&copy; 2026 RHADZOR STUDIO. SEMARANG.</p>
+    </footer>
+
+    <script>
+        // Glitch text setup
+        document.querySelectorAll('.glitch-text').forEach(el => {
+            el.setAttribute('data-text', el.innerText);
+        });
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scroll-progress');
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+            scrollProgress.style.transform = `scaleX(${scrollPercent})`;
+        });
+
+        // Custom Cursor
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        if (!prefersReducedMotion && !window.matchMedia('(pointer: coarse)').matches) {
+            const dot = document.querySelector('.cursor-dot');
+            const ring = document.getElementById('cursor-ring');
+            let mouseX = 0, mouseY = 0;
+            let ringX = 0, ringY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX; 
+                mouseY = e.clientY;
+                dot.style.left = mouseX + 'px';
+                dot.style.top = mouseY + 'px';
+            });
+
+            function animateCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                ring.style.left = ringX + 'px';
+                ring.style.top = ringY + 'px';
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            const interactiveElements = document.querySelectorAll('a, button, .magnetic-btn');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    ring.classList.add('hovering');
+                    dot.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                });
+                el.addEventListener('mouseleave', () => {
+                    ring.classList.remove('hovering');
+                    dot.style.transform = 'translate(-50%, -50%) scale(1)';
+                });
+            });
+        } else {
+            document.querySelectorAll('.cursor-dot, .cursor-ring').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        // Magnetic Button Effect
+        if (!prefersReducedMotion && !window.matchMedia('(pointer: coarse)').matches) {
+            document.querySelectorAll('.magnetic-btn').forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                });
+                
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = 'translate(0, 0)';
+                });
+            });
+        }
+
+        // Spotlight & Tilt Logic
+        const holoWrappers = document.querySelectorAll('.holo-card-wrapper');
+
+        holoWrappers.forEach(wrapper => {
+            const tiltLayer = wrapper.querySelector('.holo-card-tilt-layer');
+
+            wrapper.addEventListener('mousemove', (e) => {
+                if (prefersReducedMotion) return;
+                
+                const rect = wrapper.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                tiltLayer.style.setProperty('--mouse-x', `${x}px`);
+                tiltLayer.style.setProperty('--mouse-y', `${y}px`);
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -8; 
+                const rotateY = ((x - centerX) / centerX) * 8;
+
+                tiltLayer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            wrapper.addEventListener('mouseleave', () => {
+                tiltLayer.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+
+        // Scroll Animation - Stack Fix
+        if (!prefersReducedMotion) {
+            gsap.registerPlugin(ScrollTrigger);
+            const lenis = new Lenis({ duration: 1.2, smooth: true });
+            
+            function raf(time) { 
+                lenis.raf(time); 
+                requestAnimationFrame(raf); 
+            }
+            requestAnimationFrame(raf);
+
+            const cards = gsap.utils.toArray(".card-sticky-container");
+
+            cards.forEach((card, i) => {
+                const inner = card.querySelector(".holo-card-wrapper");
+                
+                if (i < cards.length - 1) {
+                    gsap.to(inner, {
+                        scale: 0.9,
+                        opacity: 0,
+                        filter: 'blur(20px)',
+                        scrollTrigger: {
+                            trigger: cards[i + 1],
+                            start: "top 85%",
+                            end: "top 15%",
+                            scrub: 0.5,
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
