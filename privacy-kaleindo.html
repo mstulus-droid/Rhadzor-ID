@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Kaleindo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        :root {
+            --neon-rose: #f43f5e;
+            --neon-cyan: #00f5ff;
+            --neon-yellow: #ffbe0b;
+            --dark-bg: #030303;
+        }
+
+        body { 
+            background-color: var(--dark-bg); 
+            color: white; 
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        /* Noise */
+        .noise {
+            position: fixed; 
+            inset: 0; 
+            pointer-events: none; 
+            z-index: 5;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Navigation */
+        .nav-privacy {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(180deg, rgba(3,3,3,0.95) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-privacy a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-privacy a:hover {
+            text-shadow: 0 0 20px var(--neon-rose);
+            color: var(--neon-rose);
+        }
+
+        /* Language Switch - Terpisah dari homepage */
+        .lang-switch {
+            display: flex;
+            gap: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .lang-btn {
+            cursor: pointer;
+            opacity: 0.4;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .lang-btn.active {
+            opacity: 1;
+            color: var(--neon-rose);
+            border-bottom: 1px solid var(--neon-rose);
+        }
+
+        /* Hero Section */
+        .hero-privacy {
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 8rem 2rem 4rem;
+            overflow: hidden;
+        }
+
+        .hero-privacy::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 50%, rgba(244, 63, 94, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(255, 190, 11, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--neon-rose), #fb7185);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 40px rgba(244, 63, 94, 0.3);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title .gradient-text {
+            background: linear-gradient(90deg, var(--neon-rose), var(--neon-yellow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.2em;
+        }
+
+        /* Content Section */
+        .content-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem 5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .policy-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .policy-card h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--neon-rose);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .policy-card h2 i {
+            font-size: 1rem;
+        }
+
+        .policy-card p, .policy-card li {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .policy-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .policy-card li {
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .policy-card li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: var(--neon-rose);
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: rgba(244, 63, 94, 0.1);
+            border-left: 3px solid var(--neon-rose);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .back-button:hover {
+            background: rgba(244, 63, 94, 0.1);
+            border-color: var(--neon-rose);
+            color: var(--neon-rose);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .privacy-footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.3);
+        }
+
+        .privacy-footer p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+            .policy-card {
+                padding: 1.5rem;
+            }
+            
+            .hero-privacy {
+                padding-top: 6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="noise"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-privacy">
+        <a href="apps.html" class="flex items-center gap-3 group">
+            <div class="w-2 h-6 bg-white group-hover:bg-[var(--neon-rose)] transition-colors"></div>
+            <span class="font-bold tracking-tighter">KALEINDO</span>
+        </a>
+        
+        <div class="lang-switch">
+            <span class="lang-btn active" onclick="setLang('id')" id="lang-id">ID</span>
+            <span class="lang-btn" onclick="setLang('en')" id="lang-en">EN</span>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero-privacy">
+        <div class="app-icon">
+            <i class="fas fa-calendar-check text-white"></i>
+        </div>
+        <h1 class="hero-title">
+            <span class="gradient-text" data-key="page_title">Privacy Policy</span>
+        </h1>
+        <p class="hero-subtitle" data-key="last_updated">Last Updated: January 2025</p>
+    </section>
+
+    <!-- Content -->
+    <section class="content-section">
+        
+        <div class="policy-card">
+            <h2><i class="fas fa-shield-alt"></i> <span data-key="sec1_title">Introduction</span></h2>
+            <p data-key="sec1_p1">Kaleindo ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our calendar application.</p>
+            <p data-key="sec1_p2">By using Kaleindo, you agree to the collection and use of information in accordance with this policy.</p>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-database"></i> <span data-key="sec2_title">Information We Collect</span></h2>
+            <p data-key="sec2_intro">We collect the following types of information:</p>
+            <ul>
+                <li data-key="sec2_item1"><strong>Personal Information:</strong> Name, email address (if you create an account)</li>
+                <li data-key="sec2_item2"><strong>Calendar Data:</strong> Events, notes, and reminders you create</li>
+                <li data-key="sec2_item3"><strong>Usage Data:</strong> App usage statistics, crash reports, and performance data</li>
+                <li data-key="sec2_item4"><strong>Device Information:</strong> Device type, OS version, and unique device identifiers</li>
+            </ul>
+            
+            <div class="highlight-box">
+                <p data-key="sec2_note"><strong>Important:</strong> All your calendar data is stored locally on your device by default. We do not upload your personal events or notes to our servers unless you explicitly enable cloud sync.</p>
+            </div>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-cogs"></i> <span data-key="sec3_title">How We Use Your Information</span></h2>
+            <p data-key="sec3_intro">We use the collected information for:</p>
+            <ul>
+                <li data-key="sec3_item1">Providing and maintaining the Kaleindo service</li>
+                <li data-key="sec3_item2">Sending holiday notifications and event reminders</li>
+                <li data-key="sec3_item3">Improving app performance and user experience</li>
+                <li data-key="sec3_item4">Responding to your support requests</li>
+                <li data-key="sec3_item5">Analyzing usage patterns to develop new features</li>
+            </ul>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-lock"></i> <span data-key="sec4_title">Data Security</span></h2>
+            <p data-key="sec4_p1">We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+            <p data-key="sec4_p2">However, no method of transmission over the internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your data, we cannot guarantee absolute security.</p>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-user-shield"></i> <span data-key="sec5_title">Your Rights</span></h2>
+            <p data-key="sec5_intro">You have the right to:</p>
+            <ul>
+                <li data-key="sec5_item1">Access and update your personal information</li>
+                <li data-key="sec5_item2">Delete your account and associated data</li>
+                <li data-key="sec5_item3">Export your calendar data</li>
+                <li data-key="sec5_item4">Opt-out of analytics collection</li>
+                <li data-key="sec5_item5">Request information about data we hold about you</li>
+            </ul>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-child"></i> <span data-key="sec6_title">Children's Privacy</span></h2>
+            <p data-key="sec6_p1">Kaleindo is not intended for use by children under the age of 13. We do not knowingly collect personally identifiable information from children under 13.</p>
+            <p data-key="sec6_p2">If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us so that we can take necessary actions.</p>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-sync-alt"></i> <span data-key="sec7_title">Changes to This Policy</span></h2>
+            <p data-key="sec7_p1">We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
+            <p data-key="sec7_p2">You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
+        </div>
+
+        <div class="policy-card">
+            <h2><i class="fas fa-envelope"></i> <span data-key="sec8_title">Contact Us</span></h2>
+            <p data-key="sec8_p1">If you have any questions about this Privacy Policy, please contact us:</p>
+            <ul>
+                <li data-key="sec8_email">Email: privacy@rhadzor.id</li>
+                <li data-key="sec8_address">Address: Semarang, Indonesia</li>
+            </ul>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center">
+            <a href="apps.html" class="back-button" data-key="back_button">
+                <i class="fas fa-arrow-left"></i>
+                BACK TO APPS
+            </a>
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="privacy-footer">
+        <p>&copy; 2025 Kaleindo by RHADZOR STUDIO. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Language Data - Terpisah dari homepage
+        const langData = {
+            id: {
+                page_title: "Kebijakan Privasi",
+                last_updated: "Terakhir Diperbarui: Januari 2025",
+                sec1_title: "Pendahuluan",
+                sec1_p1: "Kaleindo (\"kami\") berkomitmen untuk melindungi privasi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, mengungkapkan, dan melindungi informasi Anda saat menggunakan aplikasi kalender kami.",
+                sec1_p2: "Dengan menggunakan Kaleindo, Anda setuju dengan pengumpulan dan penggunaan informasi sesuai dengan kebijakan ini.",
+                sec2_title: "Informasi yang Kami Kumpulkan",
+                sec2_intro: "Kami mengumpulkan jenis informasi berikut:",
+                sec2_item1: "<strong>Informasi Pribadi:</strong> Nama, alamat email (jika Anda membuat akun)",
+                sec2_item2: "<strong>Data Kalender:</strong> Acara, catatan, dan pengingat yang Anda buat",
+                sec2_item3: "<strong>Data Penggunaan:</strong> Statistik penggunaan aplikasi, laporan crash, dan data performa",
+                sec2_item4: "<strong>Informasi Perangkat:</strong> Jenis perangkat, versi OS, dan pengidentifikasi perangkat unik",
+                sec2_note: "<strong>Penting:</strong> Semua data kalender Anda disimpan secara lokal di perangkat Anda secara default. Kami tidak mengunggah acara atau catatan pribadi Anda ke server kami kecuali Anda secara eksplisit mengaktifkan sinkronisasi cloud.",
+                sec3_title: "Bagaimana Kami Menggunakan Informasi Anda",
+                sec3_intro: "Kami menggunakan informasi yang dikumpulkan untuk:",
+                sec3_item1: "Menyediakan dan memelihara layanan Kaleindo",
+                sec3_item2: "Mengirim notifikasi hari libur dan pengingat acara",
+                sec3_item3: "Meningkatkan performa dan pengalaman pengguna aplikasi",
+                sec3_item4: "Menanggapi permintaan dukungan Anda",
+                sec3_item5: "Menganalisis pola penggunaan untuk mengembangkan fitur baru",
+                sec4_title: "Keamanan Data",
+                sec4_p1: "Kami menerapkan langkah-langkah keamanan teknis dan organisasi yang sesuai untuk melindungi informasi pribadi Anda dari akses, perubahan, pengungkapan, atau penghancuran yang tidak sah.",
+                sec4_p2: "Namun, tidak ada metode transmisi melalui internet atau penyimpanan elektronik yang 100% aman. Meskipun kami berusaha menggunakan cara yang dapat diterima secara komersial untuk melindungi data Anda, kami tidak dapat menjamin keamanan absolut.",
+                sec5_title: "Hak Anda",
+                sec5_intro: "Anda memiliki hak untuk:",
+                sec5_item1: "Mengakses dan memperbarui informasi pribadi Anda",
+                sec5_item2: "Menghapus akun dan data terkait Anda",
+                sec5_item3: "Mengekspor data kalender Anda",
+                sec5_item4: "Memilih keluar dari pengumpulan analitik",
+                sec5_item5: "Meminta informasi tentang data yang kami simpan tentang Anda",
+                sec6_title: "Privasi Anak",
+                sec6_p1: "Kaleindo tidak dimaksudkan untuk digunakan oleh anak di bawah usia 13 tahun. Kami tidak secara sengaja mengumpulkan informasi yang dapat diidentifikasi secara pribadi dari anak di bawah 13 tahun.",
+                sec6_p2: "Jika Anda adalah orang tua atau wali dan Anda menyadari bahwa anak Anda telah memberikan informasi pribadi kepada kami, silakan hubungi kami agar kami dapat mengambil tindakan yang diperlukan.",
+                sec7_title: "Perubahan Kebijakan Ini",
+                sec7_p1: "Kami dapat memperbarui Kebijakan Privasi kami dari waktu ke waktu. Kami akan memberi tahu Anda tentang perubahan apa pun dengan memposting Kebijakan Privasi baru di halaman ini dan memperbarui tanggal \"Terakhir Diperbarui\".",
+                sec7_p2: "Anda disarankan untuk meninjau Kebijakan Privasi ini secara berkala untuk setiap perubahan. Perubahan pada Kebijakan Privasi ini efektif ketika diposting di halaman ini.",
+                sec8_title: "Hubungi Kami",
+                sec8_p1: "Jika Anda memiliki pertanyaan tentang Kebijakan Privasi ini, silakan hubungi kami:",
+                sec8_email: "Email: privacy@rhadzor.id",
+                sec8_address: "Alamat: Semarang, Indonesia",
+                back_button: "KEMBALI KE APPS"
+            },
+            en: {
+                page_title: "Privacy Policy",
+                last_updated: "Last Updated: January 2025",
+                sec1_title: "Introduction",
+                sec1_p1: "Kaleindo (\"we\", \"our\", or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our calendar application.",
+                sec1_p2: "By using Kaleindo, you agree to the collection and use of information in accordance with this policy.",
+                sec2_title: "Information We Collect",
+                sec2_intro: "We collect the following types of information:",
+                sec2_item1: "<strong>Personal Information:</strong> Name, email address (if you create an account)",
+                sec2_item2: "<strong>Calendar Data:</strong> Events, notes, and reminders you create",
+                sec2_item3: "<strong>Usage Data:</strong> App usage statistics, crash reports, and performance data",
+                sec2_item4: "<strong>Device Information:</strong> Device type, OS version, and unique device identifiers",
+                sec2_note: "<strong>Important:</strong> All your calendar data is stored locally on your device by default. We do not upload your personal events or notes to our servers unless you explicitly enable cloud sync.",
+                sec3_title: "How We Use Your Information",
+                sec3_intro: "We use the collected information for:",
+                sec3_item1: "Providing and maintaining the Kaleindo service",
+                sec3_item2: "Sending holiday notifications and event reminders",
+                sec3_item3: "Improving app performance and user experience",
+                sec3_item4: "Responding to your support requests",
+                sec3_item5: "Analyzing usage patterns to develop new features",
+                sec4_title: "Data Security",
+                sec4_p1: "We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
+                sec4_p2: "However, no method of transmission over the internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your data, we cannot guarantee absolute security.",
+                sec5_title: "Your Rights",
+                sec5_intro: "You have the right to:",
+                sec5_item1: "Access and update your personal information",
+                sec5_item2: "Delete your account and associated data",
+                sec5_item3: "Export your calendar data",
+                sec5_item4: "Opt-out of analytics collection",
+                sec5_item5: "Request information about data we hold about you",
+                sec6_title: "Children's Privacy",
+                sec6_p1: "Kaleindo is not intended for use by children under the age of 13. We do not knowingly collect personally identifiable information from children under 13.",
+                sec6_p2: "If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us so that we can take necessary actions.",
+                sec7_title: "Changes to This Policy",
+                sec7_p1: "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last Updated\" date.",
+                sec7_p2: "You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.",
+                sec8_title: "Contact Us",
+                sec8_p1: "If you have any questions about this Privacy Policy, please contact us:",
+                sec8_email: "Email: privacy@rhadzor.id",
+                sec8_address: "Address: Semarang, Indonesia",
+                back_button: "BACK TO APPS"
+            }
+        };
+
+        // Language functions - terpisah dari homepage
+        function setLang(lang) {
+            document.getElementById('lang-id').className = lang === 'id' ? 'lang-btn active' : 'lang-btn';
+            document.getElementById('lang-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
+            
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (langData[lang][key]) {
+                    el.innerHTML = langData[lang][key];
+                }
+            });
+            
+            // Simpan ke storage terpisah
+            localStorage.setItem('kaleindo-privacy-lang', lang);
+        }
+
+        // Load stored language
+        const storedLang = localStorage.getItem('kaleindo-privacy-lang') || 'id';
+        setLang(storedLang);
+
+        // GSAP Animations
+        gsap.from(".app-icon", { scale: 0, rotation: -180, duration: 0.8, ease: "back.out(1.7)", delay: 0.2 });
+        gsap.from(".hero-title", { y: 50, opacity: 0, duration: 0.8, ease: "power3.out", delay: 0.4 });
+        gsap.from(".hero-subtitle", { y: 30, opacity: 0, duration: 0.6, ease: "power2.out", delay: 0.6 });
+        gsap.from(".policy-card", { 
+            y: 60, 
+            opacity: 0, 
+            duration: 0.6, 
+            stagger: 0.1, 
+            ease: "power2.out",
+            delay: 0.8 
+        });
+        gsap.from(".back-button", { y: 20, opacity: 0, duration: 0.5, delay: 1.5 });
+    </script>
+</body>
+</html>
