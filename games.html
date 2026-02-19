@@ -57,27 +57,6 @@
             opacity: 0.2;
         }
 
-        /* Glow effect di bawah kartu */
-        .game-card::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 40px;
-            background: radial-gradient(ellipse at center, var(--card-glow, rgba(255,255,255,0.2)) 0%, transparent 70%);
-            filter: blur(20px);
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .game-card.ready:hover::after {
-            opacity: 1;
-        }
-
         /* Noise */
         .noise {
             position: fixed; 
@@ -280,22 +259,6 @@
             box-shadow: 
                 0 30px 60px -20px rgba(0,0,0,0.5),
                 0 0 30px var(--card-glow, rgba(255,255,255,0.1));
-        }
-
-        /* Glow permanen di bawah kartu untuk mobile visibility */
-        .game-card::after {
-            content: '';
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            height: 60px;
-            background: radial-gradient(ellipse at center, var(--card-glow, rgba(255,255,255,0.15)) 0%, transparent 70%);
-            filter: blur(30px);
-            opacity: 0.6;
-            pointer-events: none;
-            z-index: -1;
         }
 
         /* Card Color Variants */
