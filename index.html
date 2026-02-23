@@ -12,7 +12,7 @@
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#030303">
 
-    <title>RHADZOR.ID — Digital Playground</title>
+    <title>STUDIO.RHADZOR.ID — Digital Playground</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -268,6 +268,30 @@
             opacity: 1;
             color: var(--neon-cyan);
             border-bottom: 1px solid var(--neon-cyan);
+        }
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .brand-mark .studio-prefix {
+            color: rgba(255,255,255,0.88);
+        }
+
+        .brand-mark .home-root {
+            color: rgba(255,255,255,0.72);
+            text-decoration: none;
+            transition: color 0.25s;
+        }
+
+        .brand-mark:hover .home-root,
+        .brand-mark .home-root:hover {
+            color: var(--neon-cyan);
         }
 
         /* Hero Section */
@@ -836,13 +860,14 @@
     <!-- Floating Orbs -->
     <div class="float-orb orb-1"></div>
     <div class="float-orb orb-2"></div>
-
     <!-- Navigation -->
     <nav class="nav-main" id="navbar">
-        <a href="index.html" class="flex items-center gap-2">
+        <div class="flex items-center gap-2" aria-label="Studio home">
             <div class="w-2 h-6 bg-white"></div>
-            <span class="font-bold text-lg tracking-tight">RHADZOR.ID</span>
-        </a>
+            <span class="brand-mark">
+                <span class="studio-prefix">studio.</span><a class="home-root" href="https://rhadzor.id">rhadzor.id</a>
+            </span>
+        </div>
         
         <div class="flex items-center">
             <div class="nav-links">
